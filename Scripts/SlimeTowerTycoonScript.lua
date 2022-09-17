@@ -1,1 +1,1 @@
-
+print("Eu sou lindo")
