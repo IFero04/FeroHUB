@@ -1,20 +1,20 @@
 -- Variavels --
 local remmotePath = game:GetService("ReplicatedStorage").GTycoonClient.Remotes
 local player = game.Players.LocalPlayer
-local selectedSlime = 1
-local selectedRate = 1 
+local selectedSlime 
+local selectedRate 
+local playerBase = game:GetService("Workspace").ReturnPortals:FindFirstChild("ReturnToPlot").Portal.CFrame
 local obby = game:GetService("Workspace").ObbyCheckpoints
 local obbyCheckpoints = {
-    [1] = obby.ObbyCheckpoint1.CFrame,
-    [2] = obby.ObbyCheckpoint2.CFrame + Vector3.new(-1, 0, 0),
-    [3] = obby.ObbyCheckpoint3.CFrame,
-    [4] = obby.ObbyCheckpoint4.CFrame,
-    [5] = obby.ObbyCheckpoint5.CFrame,
-    [6] = obby.ObbyCheckpoint6.CFrame,
-    [7] = obby.ObbyCheckpoint7.CFrame,
-    [8] = obby.ObbyCheckpoint8.CFrame,
-    [9] = game:GetService("Workspace").ObbyButton2.Button.CFrame + Vector3.new(0, 20, 0),
-    [10] = game:GetService("Workspace").ReturnPortals:FindFirstChild("ReturnToPlot").Portal.CFrame
+    [1] = obby.ObbyCheckpoint1.TouchInterest,
+    [2] = obby.ObbyCheckpoint2.TouchInterest,
+    [3] = obby.ObbyCheckpoint3.TouchInterest,
+    [4] = obby.ObbyCheckpoint4.TouchInterest,
+    [5] = obby.ObbyCheckpoint5.TouchInterest,
+    [6] = obby.ObbyCheckpoint6.TouchInterest,
+    [7] = obby.ObbyCheckpoint7.TouchInterest,
+    [8] = obby.ObbyCheckpoint8.TouchInterest,
+    [9] = game:GetService("Workspace").ObbyButton2.Button.TouchInterest,
 }
 getgenv().autoDeposit = false
 getgenv().autoMerge = false
@@ -117,13 +117,13 @@ function doAutoObby()
     spawn(function() 
         while autoObby do
            for i, checkPoint in pairs(obbyCheckpoints) do
-                if player.Character then
-                    wait()
-                    teleportTo(checkPoint)
-                    wait(2)
-                end
+                firetouchinterest(player.Character.Head, checkPoint.Parent, 0)
+                wait(0.5)
+                firetouchinterest(player.Character.Head, checkPoint.Parent, 1)
+                wait(0.5)
            end
-           wait(3)
+           teleportTo(playerBase)
+           wait(5)
         end
     end)
 end
@@ -226,18 +226,15 @@ local BuyS = TabBuy:AddSection({
     Name = "Buy Slimes"
 })
 
-BuyS:AddTextbox({
+BuyS:AddDropdown({
 	Name = "Slime Ammont",
 	Default = "1",
-	TextDisappear = false,
+	Options = {"1", "5", "25", "50", "100"},
     Save = true,
     Flag = "SA",
 	Callback = function(value)
-        tonumber(value)
-        if value then
-            print("Slime Ammont is: ",value)
-            selectedSlime = value
-        end
+        print("Slime Ammont is: ",value)
+        selectedSlime = value
 		if autoBuy then
             autoBuy = false
             wait(2)
